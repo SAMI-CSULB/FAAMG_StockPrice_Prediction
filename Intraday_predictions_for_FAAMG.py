@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 # [0,2,3,4,5,6,7,8,9,10,11]
 # Importing the dataset
-dataset = pd.read_csv('Daily_Data.csv')
+dataset = pd.read_csv('Google Intraday Edited.csv')
 #Getting High Low and Open as input values
 X = dataset.iloc[:, 1:4].values
 #Settting CLose as Output
@@ -43,8 +43,58 @@ regressor.fit(X_train, y_train)
 y_pred = regressor.predict(X_test)
 y_test['Close'] = y_test['Close'].astype(float)
 
+###############################################################################
+
+from sklearn.tree import DecisionTreeRegressor
+regressorDT = DecisionTreeRegressor(random_state = 0, criterion = 'friedman_mse')
+regressorDT.fit(X_train, y_train)
+# Predicting a new result 
+y_pred_DT = regressorDT.predict(X_test)
+
+
+###############################################################################
+
+# Fitting SVR to the data set
+from sklearn.svm import SVR
+regressorSVR = SVR(kernel='callable')
+regressorSVR.fit(X_train, y_train)
+# Predicting a new result 
+y_pred_SVR = regressorSVR.predict(X_test)
+
+###############################################################################
+
+# Fitting the Regression Model to the data set
+from sklearn.ensemble import RandomForestRegressor
+regressorRF = RandomForestRegressor(n_estimators = 300, random_state=0)
+regressorRF.fit(X_train, y_train)
+# Predicting a new result 
+y_pred_RF = regressorRF.predict(X_test)
+
+
+
+
 #Concatenating Predicted and Actual "Close" values to visualize differences
 
 result = np.concatenate((y_pred.reshape(len(y_pred),1),y_test),1)
 result = pd.DataFrame(result)
 result.columns = ['Predicted Close Value', 'Actual Close Value']
+
+
+resultDT = np.concatenate((y_pred_DT.reshape(len(y_pred_DT),1),y_test),1)
+resultDT = pd.DataFrame(resultDT)
+resultDT.columns = ['Predicted Close Value using DT', 'Actual Close Value']
+
+
+resultSVR = np.concatenate((y_pred_SVR.reshape(len(y_pred_SVR),1),y_test),1)
+resultSVR = pd.DataFrame(resultSVR)
+resultSVR.columns = ['Predicted Close Value using DT', 'Actual Close Value']
+
+resultRF = np.concatenate((y_pred_RF.reshape(len(y_pred_RF),1),y_test),1)
+resultRF = pd.DataFrame(resultRF)
+resultRF.columns = ['Predicted Close Value using DT', 'Actual Close Value']
+
+
+resultRF.to_csv (r'C:\Users\HP\Desktop\Kismet Project 1\Intraday FAAMG\Google\Google Intraday Decision Tree state using Random Forest with 300 estimators and MSE.csv', index= True, header=True)
+
+import requests
+
